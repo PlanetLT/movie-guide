@@ -1,4 +1,4 @@
-package com.planet.movieguide
+package com.planet.movieguide.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,7 +6,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.planet.movieguide.activity.MovieActivity
+import com.planet.movieguide.R
 import com.planet.movieguide.data.viewModel.MovieViewModel
 import com.planet.movieguide.data.viewModel.MovieViewModelProviderFactory
 

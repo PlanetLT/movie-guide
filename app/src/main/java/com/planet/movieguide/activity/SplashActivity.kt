@@ -9,7 +9,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.planet.movieguide.MainActivity
 import com.planet.movieguide.R
 import com.planet.movieguide.core.helper.CheckInternetConnection.Companion.isOnline
 import com.planet.movieguide.data.viewModel.MovieViewModel
