@@ -1,5 +1,6 @@
 package com.planet.movieguide.activity
 
+import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -29,6 +30,7 @@ class MovieActivity() : AppCompatActivity() {
     private lateinit var movieViewModel: MovieViewModel
     var selectedPageNumber = 1
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie)
@@ -38,6 +40,7 @@ class MovieActivity() : AppCompatActivity() {
     }
 
     fun initView() {
+
         totalPageNumber = intent.getIntExtra("total_page_number", 0)
         label = intent.getStringExtra("label").toString()
         type = intent.getIntExtra("type", 0)
@@ -45,7 +48,7 @@ class MovieActivity() : AppCompatActivity() {
         tvLabel = findViewById(R.id.tv_label)
         recPageNumber = findViewById(R.id.rec_page_number)
         recMovieItem = findViewById(R.id.rec_movie_item)
-        val provider = MovieViewModelProviderFactory(application)
+        val provider = MovieViewModelProviderFactory(application,this)
         movieViewModel = ViewModelProvider(this, provider).get(MovieViewModel::class.java)
     }
 
@@ -57,26 +60,38 @@ class MovieActivity() : AppCompatActivity() {
         prepareRecPageNumber(totalPageNumber)
 
         movieViewModel.observeUpComingMovieListLiveData().observe(this, Observer { resultList ->
+            var isContain=false
             if (type == 1) {
                 for (item in resultList) {
                     if (selectedPageNumber == item.page) {
+                        isContain=true
                         recPageNumber.visibility = View.VISIBLE
                         prepareRecMovieItemAccordingWithPageNumber(item.results)
                         break
                     }
                 }
+
+                if (!isContain){
+                    checkInternetConnection()
+                }
+
             }
         })
 
         movieViewModel.observePopularMovieListLiveData().observe(this, Observer { resultList ->
-
+            var isContain = false
             if (type == 2) {
                 for (item in resultList) {
                     if (selectedPageNumber == item.page) {
+                        isContain = true
                         recPageNumber.visibility = View.VISIBLE
                         prepareRecMovieItemAccordingWithPageNumber(item.results)
                         break
                     }
+                }
+
+                if (!isContain){
+                    checkInternetConnection()
                 }
 
             }
@@ -123,6 +138,13 @@ class MovieActivity() : AppCompatActivity() {
 
     }
 
+    fun checkInternetConnection() {
+        val check = CheckInternetConnection.isOnline(this)
+        if (!check) {
+            Toast.makeText(this, "Please check your internet connection to load new Data.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     fun prepareRecPageNumber(totalPageNumber: Int) {
         val pageNumberList = ArrayList<Int>()
         for (i in 1..totalPageNumber) {
@@ -135,16 +157,21 @@ class MovieActivity() : AppCompatActivity() {
 
         adapter.onItemClick = {
             selectedPageNumber = it
-            val check= CheckInternetConnection.isOnline(this)
-            if(check){
-                if (type == 1) {
-                    movieViewModel.fetchAllUpComingMovieListAccordingWithPageNumber(it)
-                } else if (type == 2) {
-                    movieViewModel.fetchAllPopularMovieListAccordingWithPageNumber(it)
-                }
-            }else{
-                Toast.makeText(this,"Please check your internet connection",Toast.LENGTH_SHORT).show()
+            if (type == 1) {
+                movieViewModel.fetchAllUpComingMovieListAccordingWithPageNumber(it)
+            } else if (type == 2) {
+                movieViewModel.fetchAllPopularMovieListAccordingWithPageNumber(it)
             }
+//            val check= CheckInternetConnection.isOnline(this)
+//            if(check){
+//                if (type == 1) {
+//                    movieViewModel.fetchAllUpComingMovieListAccordingWithPageNumber(it)
+//                } else if (type == 2) {
+//                    movieViewModel.fetchAllPopularMovieListAccordingWithPageNumber(it)
+//                }
+//            }else{
+//                Toast.makeText(this,"Please check your internet connection",Toast.LENGTH_SHORT).show()
+//            }
 
         }
     }

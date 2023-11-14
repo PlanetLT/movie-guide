@@ -35,7 +35,7 @@ class MovieDetailActivity : AppCompatActivity() {
         tvDesc = findViewById(R.id.tv_desc)
         tvOther = findViewById(R.id.tv_other)
         imgFavourite = findViewById(R.id.img_favourite)
-        val provider = MovieViewModelProviderFactory(application)
+        val provider = MovieViewModelProviderFactory(application,this)
         movieViewModel = ViewModelProvider(this, provider).get(MovieViewModel::class.java)
     }
 

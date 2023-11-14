@@ -24,7 +24,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     fun initView() {
-        val provider = MovieViewModelProviderFactory(application)
+        val provider = MovieViewModelProviderFactory(application,this)
         movieViewModel = ViewModelProvider(this, provider).get(MovieViewModel::class.java)
     }
 

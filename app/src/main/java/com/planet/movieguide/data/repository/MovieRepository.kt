@@ -1,7 +1,9 @@
 package com.planet.movieguide.data.repository
 
 import DBHelper
+import android.app.ProgressDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.planet.movieguide.core.constant.Config.Companion.API_KEY
@@ -24,7 +26,10 @@ class MovieRepository(var db: DBHelper) {
         allFavouriteList= MutableLiveData<List<Movie>>()
 
     }
-    fun getPopularMovie(page: Int = 1) {
+    fun getPopularMovie(page: Int = 1,progressDialog: ProgressDialog) {
+        if(page!=1){
+            progressDialog.show()
+        }
         RetrofitInstance.api.getPopularMovies(api_key = API_KEY, page = page)
             .enqueue(object : Callback<Result> {
                 override fun onResponse(call: Call<Result>, response: Response<Result>) {
@@ -32,6 +37,7 @@ class MovieRepository(var db: DBHelper) {
                         var arrayList = response.body()!!
                         addPopularResult(arrayList)
                         getAllResult()
+                        progressDialog.dismiss()
                         Log.d("CHECKPOPULARARRAYLIST", response.body().toString())
                     }
 
@@ -39,12 +45,18 @@ class MovieRepository(var db: DBHelper) {
 
                 override fun onFailure(call: Call<Result>, t: Throwable) {
                     Log.d("CHECKPOPULARARRAYLIST", t.message.toString())
+                    getAllResult()
+                    progressDialog.dismiss()
                 }
             })
     }
 
 
-    fun getUpComingMovie(page: Int = 1) {
+
+    fun getUpComingMovie(page: Int = 1,progressDialog: ProgressDialog) {
+        if(page!=1){
+            progressDialog.show()
+        }
         RetrofitInstance.api.getUpComingMovies(api_key = API_KEY, page = page)
             .enqueue(object : Callback<Result> {
                 override fun onResponse(call: Call<Result>, response: Response<Result>) {
@@ -52,6 +64,7 @@ class MovieRepository(var db: DBHelper) {
                         var arrayList = response.body()!!
                         addUpComingResult(arrayList)
                         getAllResult()
+                        progressDialog.dismiss()
                         Log.d("CHECKUPCOMINGARRAYLIST", response.body().toString())
                     }
 
@@ -59,6 +72,8 @@ class MovieRepository(var db: DBHelper) {
 
                 override fun onFailure(call: Call<Result>, t: Throwable) {
                     Log.d("CHECKUPCOMINGARRAYLIST", t.message.toString())
+                    getAllResult()
+                    progressDialog.dismiss()
                 }
             })
     }

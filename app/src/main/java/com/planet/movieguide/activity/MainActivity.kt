@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         btnUpcoming=findViewById(R.id.btn_upcoming)
         btnFavourite=findViewById(R.id.btn_favourite)
 
-        val provider = MovieViewModelProviderFactory(application)
+        val provider = MovieViewModelProviderFactory(application,this)
         movieViewModel = ViewModelProvider(this,provider).get(MovieViewModel::class.java)
         movieViewModel.fetchAllMovieList()
 

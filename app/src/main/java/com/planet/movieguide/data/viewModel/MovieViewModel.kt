@@ -1,7 +1,9 @@
 package com.planet.movieguide.data.viewModel
 
 import DBHelper
+import android.app.AlertDialog
 import android.app.Application
+import android.app.ProgressDialog
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
@@ -11,18 +13,24 @@ import com.planet.movieguide.data.model.Result
 import com.planet.movieguide.data.repository.MovieRepository
 
 class MovieViewModel(
-    application: Application
+    application: Application,
+    context: Context
 ) : AndroidViewModel(application) {
 
     var popularMovieList: LiveData<List<Result>>
     var upComingMovieList: LiveData<List<Result>>
     var favouriteMovieList: LiveData<List<Movie>>
+    var mProgressDialog: ProgressDialog
     private val repository: MovieRepository
+
 
     init {
         val db = DBHelper(application.applicationContext, null)
         repository = MovieRepository(db)
         repository.getAllResult()
+
+        mProgressDialog = ProgressDialog(context)
+        mProgressDialog.setMessage("Loading...")
 
         popularMovieList = repository.allPopularList
         upComingMovieList = repository.allPopularList
@@ -30,16 +38,16 @@ class MovieViewModel(
     }
 
     fun fetchAllMovieList() {
-        repository.getPopularMovie()
-        repository.getUpComingMovie()
+        repository.getPopularMovie(1,mProgressDialog)
+        repository.getUpComingMovie(1,mProgressDialog)
         getAllResult()
     }
     fun fetchAllUpComingMovieListAccordingWithPageNumber(pageNumber:Int){
-        repository.getUpComingMovie(pageNumber)
+        repository.getUpComingMovie(pageNumber,mProgressDialog)
     }
 
     fun fetchAllPopularMovieListAccordingWithPageNumber(pageNumber:Int){
-        repository.getPopularMovie(pageNumber)
+        repository.getPopularMovie(pageNumber,mProgressDialog)
     }
 
 
